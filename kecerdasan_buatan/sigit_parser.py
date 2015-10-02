@@ -1,7 +1,7 @@
 import re
 
 grammar = re.compile(
-    r'CARI\s+(BUKU|JURNAL|PROSIDING|REFERENSI)\s+DENGAN\s+'
+    r'CARI\s+(BUKU|JURNAL|PROSIDING|SEMUA)\s+DENGAN\s+'
     r'((topik|penulis|penerbit)\s*(=|~=)\s*"([\w\s]+)")\s*'
     r'(DAN\s+(topik|penulis|penerbit)\s*(=|~=)\s*"([\w\s]+)"\s*)*',
     re.IGNORECASE
