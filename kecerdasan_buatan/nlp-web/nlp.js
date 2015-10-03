@@ -61,8 +61,8 @@ function scan(characters, tokenExprs) {
 
 function QueryParser() {
     this.MIN_TOKENS = 6;
-    this.QUERY_PATTERN = /CARI OBJECT DENGAN (.+)/i;
-    this.CRITERIA_PATTERN = /(PARAM_NAME OPERATOR PARAM_VALUE)( DAN PARAM_NAME OPERATOR PARAM_VALUE)*/i;
+    this.QUERY_PATTERN = /^CARI OBJECT DENGAN (.+)$/i;
+    this.CRITERIA_PATTERN = /^(PARAM_NAME OPERATOR PARAM_VALUE)( DAN PARAM_NAME OPERATOR PARAM_VALUE)*$/i;
 
     this.parse = function (tokens) {
         this.checkSentence(tokens);
