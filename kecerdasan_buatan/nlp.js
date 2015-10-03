@@ -19,7 +19,7 @@ TOKEN_EXPRS = [
     {pattern: '=', tag: OPERATOR},
     {pattern: 'MENGANDUNG', tag: OPERATOR},
     {pattern: 'DAN', tag: RESERVED},
-    {pattern: '"\\w[\\w\\s]*"', tag: PARAM_VALUE},
+    {pattern: '"\\w.*?"', tag: PARAM_VALUE},
 ]
 
 function scan(characters, tokenExprs) {
@@ -61,53 +61,52 @@ function scan(characters, tokenExprs) {
 
 function QueryParser() {
     this.MIN_TOKENS = 6;
+    this.QUERY_PATTERN = /CARI OBJECT DENGAN (.+)/i;
+    this.CRITERIA_PATTERN = /(PARAM_NAME OPERATOR PARAM_VALUE)( DAN PARAM_NAME OPERATOR PARAM_VALUE)*/i;
 
-    this.parseTokens = function (tokens) {
-        if (tokens.length < this.MIN_TOKENS) {
-            throw new Error('Panjang token tidak valid!');
-        }
+    this.parse = function (tokens) {
+        this.checkSentence(tokens);
 
-        if (tokens[0].tag != RESERVED || tokens[0].text != 'CARI') {
-            throw new Error('token pertama tidak valid!');
-        }
-
-        if (tokens[1].tag != OBJECT) {
-            throw new Error('Objek yang dicari tidak valid: ' + tokens[1].text + ' !');
-        }
-        var objectToSearch = tokens[1].text;
-
-        if (tokens[2].tag != RESERVED || tokens[2].text != 'DENGAN') {
-            throw new Error('token ketiga tidak valid!');
-        }
-
-        var index = 3;
         var criteria = [];
+        var index = 3;
+
         do {
-            if (index > this.MIN_TOKENS && tokens[index-1] != RESERVED && tokens[index-1] != 'DAN') {
-                throw new Error('Parser gagal memparsing kriteria pencarian!');
-            }
-
-            if (tokens[index].tag != PARAM_NAME) {
-                throw new Error('Parser gagal memparsing nama parameter pencarian!');
-            }
-
-            if (tokens[index+1].tag != OPERATOR) {
-                throw new Error('Parser gagal memparsing operator!');
-            }
-
-            if (tokens[index+2].tag != PARAM_VALUE) {
-                throw new Error('Parser gagal memparsing nilai parameter pencarian! ' + tokens[index+2].tag);
-            }
-
             criteria.push({
-                paramName: tokens[index].text, operator: tokens[index+1].text, paramValue: tokens[index+2].text
+                'paramName': tokens[index].text,
+                'operator': tokens[index+1].text,
+                'paramValue': tokens[index+2].text,
             });
-            index += 5;
+            index += 4;
         } while (index < tokens.length)
 
         return {
-            "objectToSearch": objectToSearch,
+            "objectToSearch": tokens[1].text,
             "criteria": criteria
         }
-    }
+    };
+
+    this.checkSentence = function(tokens) {
+        var tokenTagString = this.createTokenTagString(tokens);
+        var queryMatch = this.QUERY_PATTERN.exec(tokenTagString);
+
+        if (queryMatch === null) {
+            throw new Error('Parsing gagal dilakukan, struktur query salah!');
+        }
+
+        var criteriaTagString = queryMatch[1];
+        if (!this.CRITERIA_PATTERN.test(criteriaTagString)) {
+            throw new Error('Parsing gagal dilakukan, struktur klausa kriteria pencarian salah!');
+        }
+    };
+
+    this.createTokenTagString = function(tokens) {
+        var tokenTagString = tokens[0].tag == RESERVED ? tokens[0].text : tokens[0].tag;
+
+        for (var i=1; i < tokens.length; i++) {
+            var tokenTag = tokens[i].tag == RESERVED ? tokens[i].text : tokens[i].tag;
+            tokenTagString += ' ' + tokenTag;
+        }
+
+        return tokenTagString;
+    };
 }

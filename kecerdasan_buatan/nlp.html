@@ -87,7 +87,6 @@ body {
 <script>
 function fillTokensTable(tokens) {
   var rowTemplate = $('#templateIsiTabelHasilScanning').html();
-  $('#isiTabelHasilScanning').html('');
 
   for (var i in tokens) {
     var token = tokens[i];
@@ -98,7 +97,6 @@ function fillTokensTable(tokens) {
 
 function fillCriteriaTable(criteria) {
   var rowTemplate = $('#templateIsiTabelKriteriaPencarian').html();
-  $('#isiTabelKriteriaPencarian').html('');
 
   for (var i in criteria) {
     var criterion = criteria[i];
@@ -112,6 +110,8 @@ $('#scanButton').click(
         var inputQuery = $('#inputQuery').val();
 
         try {
+          $('#isiTabelHasilScanning').html('');
+
           var tokens = scan(inputQuery, TOKEN_EXPRS);
           fillTokensTable(tokens);
         } catch(e) {
@@ -125,9 +125,12 @@ $('#scanAndParseButton').click(
         var inputQuery = $('#inputQuery').val();
 
         try {
+          $('#isiTabelHasilScanning').html('');
+          $('#isiTabelKriteriaPencarian').html('');
+
           var tokens = scan(inputQuery, TOKEN_EXPRS);
           var queryParser = new QueryParser();
-          var parsingResult = queryParser.parseTokens(tokens);
+          var parsingResult = queryParser.parse(tokens);
 
           fillTokensTable(tokens);
           $('#objectToSearch').html(parsingResult.objectToSearch);
