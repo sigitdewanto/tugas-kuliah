@@ -111,6 +111,7 @@ $('#scanButton').click(
 
         try {
           $('#isiTabelHasilScanning').html('');
+          $('#isiTabelKriteriaPencarian').html('');
 
           var tokens = scan(inputQuery, TOKEN_EXPRS);
           fillTokensTable(tokens);
