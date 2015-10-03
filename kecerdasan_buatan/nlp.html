@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tugas Kecerdasan Buatan - Natural Language Processing</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery.min.js"></script>
+    <script src="nlp.js"></script>
+<script>
+function sub(input, subs) {
+    return input.replace(/{(\w+)}/g, function(match, submatch) { return subs[submatch];});
+}
+</script>
+<style type="text/css">
+body {
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-query {
+  max-width: 500px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.form-query .form-query-heading {
+  margin-bottom: 10px;
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+    <form class="form-query" onsubmit="return false;">
+        <h2 class="form-query-heading">Masukkan query pencarian referensi</h2>
+        <label for="query" class="sr-only">Query</label>
+        <textarea id="inputQuery" class="form-control" rows="5" placeholder='Sintaks: CARI (BUKU|JURNAL|PROSIDING|SEMUA) DENGAN param1="kunci1" [DAN param2 MENGANDUNG "kunci2" ...]' required autofocus></textarea>
+        <button id="scanButton" class="btn btn-lg btn-primary btn-block">Scan</button>
+        <button id="scanAndParseButton" class="btn btn-lg btn-primary btn-block">Scan + Parse</button>
+    </form>
+
+    <h2>Hasil Scanning</h2>
+    <table id="tabelHasilScanning" class="table table-bordered">
+      <thead>
+        <tr>
+          <th class="text-center">Token</th>
+          <th class="text-center">Jenis Token</th>
+        </tr>
+      </thead>
+      <tbody id="isiTabelHasilScanning">
+      </tbody>
+    </table>
+
+    <h2>Hasil Parsing</h2>
+    <p>Objek yang dicari: <span id="objectToSearch"></span></p>
+
+    <table id="tabelKriteriaPencarian" class="table table-bordered">
+      <caption>Kriteria Pencarian</caption>
+      <thead>
+        <tr>
+          <th class="text-center">Nama</th>
+          <th class="text-center">Operator</th>
+          <th class="text-center">Nilai</th>
+        </tr>
+      </thead>
+      <tbody id="isiTabelKriteriaPencarian">
+      </tbody>
+    </table>
+
+    <table style="display: none;">
+      <tbody id="templateIsiTabelHasilScanning">
+        <tr><td>{tokenText}</td><td>{tokenTag}</td></tr>
+      </tbody>
+    </table>
+
+    <table style="display: none;">
+      <tbody id="templateIsiTabelKriteriaPencarian">
+        <tr><td>{paramName}</td><td>{operator}</td><td>{paramValue}</td></tr>
+      </tbody>
+    </table>
+</div>
+</body>
+
+<script>
+function fillTokensTable(tokens) {
+  var rowTemplate = $('#templateIsiTabelHasilScanning').html();
+  $('#isiTabelHasilScanning').html('');
+
+  for (var i in tokens) {
+    var token = tokens[i];
+    var row = sub(rowTemplate, {tokenText: token.text, tokenTag: token.tag});
+    $('#isiTabelHasilScanning').append(row);
+  }
+}
+
+function fillCriteriaTable(criteria) {
+  var rowTemplate = $('#templateIsiTabelKriteriaPencarian').html();
+  $('#isiTabelKriteriaPencarian').html('');
+
+  for (var i in criteria) {
+    var criterion = criteria[i];
+    var row = sub(rowTemplate, criterion);
+    $('#isiTabelKriteriaPencarian').append(row);
+  }
+}
+
+$('#scanButton').click(
+    function(e) {
+        var inputQuery = $('#inputQuery').val();
+
+        try {
+          var tokens = scan(inputQuery, TOKEN_EXPRS);
+          fillTokensTable(tokens);
+        } catch(e) {
+          alert('ERROR: ' + e.message);
+        }
+    }
+);
+
+$('#scanAndParseButton').click(
+    function(e) {
+        var inputQuery = $('#inputQuery').val();
+
+        try {
+          var tokens = scan(inputQuery, TOKEN_EXPRS);
+          var queryParser = new QueryParser();
+          var parsingResult = queryParser.parseTokens(tokens);
+
+          fillTokensTable(tokens);
+          $('#objectToSearch').html(parsingResult.objectToSearch);
+          fillCriteriaTable(parsingResult.criteria);
+        } catch(e) {
+          alert('ERROR: ' + e.message);
+        }
+    }
+);
+</script>
+
+</html>
