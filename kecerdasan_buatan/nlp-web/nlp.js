@@ -85,6 +85,9 @@ function QueryParser() {
         }
     };
 
+    /**
+    * Check whether query matched the sentence pattern or not. Throw exception if it is not.
+    */
     this.checkSentence = function(tokens) {
         var tokenTagString = this.createTokenTagString(tokens);
         var queryMatch = this.QUERY_PATTERN.exec(tokenTagString);
@@ -99,6 +102,11 @@ function QueryParser() {
         }
     };
 
+    /**
+    * Create token tag string i.e. string of token's tag, with RESERVED token as an exception,
+    * their occurences will be represented by their text instead of their tag. Token tags will
+    * be separated by single space character.
+    */
     this.createTokenTagString = function(tokens) {
         var tokenTagString = tokens[0].tag == RESERVED ? tokens[0].text : tokens[0].tag;
 
