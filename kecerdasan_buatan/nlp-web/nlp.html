@@ -112,6 +112,7 @@ $('#scanButton').click(
         try {
           $('#isiTabelHasilScanning').html('');
           $('#isiTabelKriteriaPencarian').html('');
+          $('#objectToSearch').html('');
 
           var tokens = scan(inputQuery, TOKEN_EXPRS);
           fillTokensTable(tokens);
@@ -128,6 +129,7 @@ $('#scanAndParseButton').click(
         try {
           $('#isiTabelHasilScanning').html('');
           $('#isiTabelKriteriaPencarian').html('');
+          $('#objectToSearch').html('');
 
           var tokens = scan(inputQuery, TOKEN_EXPRS);
           var queryParser = new QueryParser();
