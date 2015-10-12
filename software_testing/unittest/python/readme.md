@@ -11,3 +11,5 @@ Kelas `TestCase` juga memiliki method-method untuk melakukan `assertion`. Assert
 * `assertEquals(a, b)` menerima 2 parameter dan akan membandingkan apakah keduanya sama. Jika tidak maka tes dianggap gagal.
 * `assertAlmostEquals(a, b, places)` menerima 3 parameter dan membandingkan 2 parameter pertama dengan tingkat ketelitian sesuai parameter ketiga (`places`).
 * `assertRaises(exception, callable, param, ...)` akan memanggil `callable` dengan parameter input dari parameter ketiga dan seterusnya, kemudian mengecek apakah `exception` dilemparkan oleh `callable` atau tidak. Jika tidak, maka tes dianggap gagal.
+
+Menjalankan tes dilakukan dengan perintah berikut di command line: `python test_contoh.py`
